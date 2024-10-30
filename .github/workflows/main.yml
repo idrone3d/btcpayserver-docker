@@ -1,0 +1,35 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Corre la sincronización todos los días a medianoche
+  workflow_dispatch: # Permite ejecutarlo manualmente desde Actions
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'idrone3d'
+          git config --global user.email 'pauantich@gmail.com'
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/btcpayserver/btcpayserver.git
+          git fetch upstream
+
+      - name: Merge upstream changes
+        run: |
+          git checkout main
+          git merge upstream/main
+
+      - name: Push changes
+        run: |
+          git push origin main
+
